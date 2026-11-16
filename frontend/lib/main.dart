@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'dart:math';
+import 'package:app_frontend/app_state.dart';
+import 'package:app_frontend/authentication/login_page.dart';
+import 'package:app_frontend/authentication/registration_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -22,31 +23,16 @@ class MyApp extends StatelessWidget {
             seedColor: Color.fromRGBO(225, 20, 68, 1.0),
           ),
         ),
-        home: MyHomePage(),
+        routes: {
+          RegistrationPage.routeName: (context) => const RegistrationPage(),
+        },
+        home: Consumer<MyAppState>(
+          builder: (context, appState, child) {
+            return appState.isLoggedIn ? MyHomePage() : const LoginPage();
+          },
+        ),
       ),
     );
-  }
-}
-
-class MyAppState extends ChangeNotifier {
-  final cars = ["Audi", "BMW", "Volvo", "Mercedes"];
-
-  String car = "Audi";
-
-  void assignCar() {
-    car = cars[Random().nextInt(cars.length)];
-    notifyListeners();
-  }
-
-  var favorites = <String>[];
-
-  void toggleFavorite() {
-    if (favorites.contains(car)) {
-      favorites.remove(car);
-    } else {
-      favorites.add(car);
-    }
-    notifyListeners();
   }
 }
 
@@ -158,6 +144,13 @@ class GeneratorPage extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    appState.logout();
+                  },
+                  icon: Icon(icon),
+                  label: Text("logout"),
+                ),
                 ElevatedButton.icon(
                   onPressed: () {
                     appState.toggleFavorite();

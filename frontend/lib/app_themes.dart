@@ -26,8 +26,9 @@ class AppColors {
   static const Color lightGrey = Color(0xFFE4E7EB);
 }
 
-/// Helper class to build consistent Themedata instances
-class AppThemeBuilder {
+/// Defines the design rules and pre-configured themes for the app
+class AppTheme {
+  /// Base builder that creates a ThemeData instance with all fine-grained styling
   static ThemeData build({
     required Color backgroundColor,
     required Color accentColor,
@@ -38,52 +39,121 @@ class AppThemeBuilder {
       useMaterial3: true,
       scaffoldBackgroundColor: backgroundColor,
       primaryColor: primaryColor,
+
+      // Color scheme
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
         primary: primaryColor,
         secondary: accentColor,
+        tertiary: accentColor,
         surface: backgroundColor,
+        onPrimary: AppColors.white,
         onSurface: textColor,
       ),
-      textTheme: TextTheme(
-        bodyLarge: TextStyle(color: textColor),
-        bodyMedium: TextStyle(color: textColor),
-        titleLarge: TextStyle(color: textColor, fontWeight: FontWeight.bold),
-      ),
+
+      // AppBar
       appBarTheme: AppBarTheme(
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: backgroundColor,
+        foregroundColor: textColor,
         elevation: 0,
+        centerTitle: false,
+        titleTextStyle: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: textColor,
+        ),
       ),
+
+      // Typography
+      textTheme: TextTheme(
+        headlineLarge: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+          color: textColor,
+        ),
+        headlineMedium: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: textColor,
+        ),
+        titleLarge: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: textColor,
+        ),
+        bodyLarge: TextStyle(fontSize: 16, color: textColor),
+        bodyMedium: TextStyle(fontSize: 14, color: textColor),
+      ),
+
+      // Elevated Buttons (with rounded corners & custom padding)
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: accentColor,
-          foregroundColor: Colors.white,
+          backgroundColor: primaryColor,
+          foregroundColor: AppColors.white,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+
+      // Outlined Buttons
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: primaryColor,
+          side: BorderSide(color: primaryColor),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+
+      // Input Fields (TextFormFields, etc.)
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.white,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.lightGrey),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.lightGrey),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: primaryColor, width: 1.5),
         ),
       ),
     );
   }
-}
 
-/// Defines the design for General Areas (e.g., Login, Onboarding)
-class AppThemes {
-  static final ThemeData general = AppThemeBuilder.build(
+  // --- Predefined Theme Configurations ---
+
+  /// General areas (Login, Onboarding, etc.)
+  static final ThemeData general = build(
     primaryColor: AppColors.navy,
     accentColor: AppColors.sand,
-    backgroundColor: Colors.white, // Clean white or light neutral for login
+    backgroundColor: AppColors.white,
     textColor: AppColors.anthracite,
   );
 
-  /// Defines the design specific to customer view
-  static final ThemeData customer = AppThemeBuilder.build(
+  /// Customer-specific view theme
+  static final ThemeData customer = build(
     primaryColor: AppColors.navy,
     accentColor: AppColors.burgundy,
     backgroundColor: AppColors.cream,
     textColor: AppColors.anthracite,
   );
 
-  /// Defines the design specific to employee view
-  static final ThemeData employee = AppThemeBuilder.build(
+  /// Employee-specific view theme
+  static final ThemeData employee = build(
     primaryColor: AppColors.navy,
     accentColor: AppColors.sageDark,
     backgroundColor: AppColors.offWhite,

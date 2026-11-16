@@ -1,0 +1,21 @@
+### GET request to example server
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Max",
+  "lastName": "Mustermann",
+  "email": "max.mustermann@example.com",
+  "password": "SichererTestPassword123!",
+  "phoneNumber": "+491701234567",
+  "dateOfBirth": "1998-05-15",
+  "licenseClass": "B",
+  "licenseExpiryDate": "2032-05-15",
+  "street": "Testplatz",
+  "houseNumber": "1",
+  "postalCode": "60439",
+  "city": "Frankfurt",
+  "country": "Germany"
+}
+
+###

@@ -24,7 +24,7 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
             Customer savedCustomer = authService.registerCustomer(request);
-            // Erfolgsantwort an Flutter zurückgeben
+
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                     "message", "Registrierung erfolgreich",
                     "customerId", savedCustomer.getCustomerId()

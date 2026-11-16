@@ -60,7 +60,7 @@ public class AuthService {
         customer.setDateOfBirth(request.dateOfBirth);
         customer.setLicenseClass(request.licenseClass);
         customer.setLicenseExpiryDate(request.licenseExpiryDate);
-        customer.setAddressId(address.getAddressId()); // <-- Verknüpfung zur Adresse
+        customer.setAddressId(address.getAddressId());
 
         // 4. Passwort hashen und Registrierungszeitpunkt setzen
         customer.setPasswordHash(passwordEncoder.encode(request.password));

@@ -29,15 +29,4 @@ class MyAppState extends ChangeNotifier {
     car = cars[Random().nextInt(cars.length)];
     notifyListeners();
   }
-
-  var favorites = <String>[];
-
-  void toggleFavorite() {
-    if (favorites.contains(car)) {
-      favorites.remove(car);
-    } else {
-      favorites.add(car);
-    }
-    notifyListeners();
-  }
 }

@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
 import 'dart:convert';
 
+import 'package:app_frontend/app_state.dart';
+import 'package:app_frontend/authentication/login_page.dart';
+
+import 'package:app_frontend/app_themes.dart';
+import 'package:app_frontend/widgets/space_widgets.dart';
+
 class RegistrationPage extends StatefulWidget {
   static const routeName = '/registration';
 
-  const RegistrationPage({super.key});
+  RegistrationPage({super.key});
 
   @override
   State<RegistrationPage> createState() => _RegistrationPageState();
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
+  final _formKey = GlobalKey<FormState>();
   final String apiUrl = "http://localhost:8080/api/auth/register";
 
   final _firstNameController = TextEditingController();
@@ -75,10 +83,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
   String formatDate(String date) {
     final parts = date.split('.');
 
-    return '${parts[2]}-${parts[1].padLeft(2, '0')}-${parts[0].padLeft(2, '0')}';
+    return '${parts[2]}-${parts[1]}-${parts[0]}';
   }
 
   Future<void> register() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     debugPrint(
       'Registrierung für ${_lastNameController.text} ${_firstNameController.text}',
     );
@@ -108,13 +120,99 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
       debugPrint('HTTP Status: ${response.statusCode}');
       debugPrint('Response: ${response.body}');
-    } catch (e) {
+
+      // Nach dem async-Gap prüfen:
       if (!mounted) return;
 
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registrierung erfolgreich!')),
+        );
+        context.read<MyAppState>().login(_emailController.text);
+      }
+    } catch (e) {
       setState(() {
         result = "Error: $e";
       });
     }
+  }
+
+  Widget buildRequiredField({
+    required BuildContext context,
+    required TextEditingController controller,
+    required String label,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    final theme = Theme.of(context);
+    final isPassword = controller == _passwordController;
+
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      obscureText: isPassword ? obscurePassword : false,
+
+      decoration: InputDecoration(
+        label: RichText(
+          text: TextSpan(
+            text: '$label ',
+            style: theme.textTheme.bodyLarge,
+            children: const [
+              TextSpan(
+                text: '*',
+                style: TextStyle(
+                  color: AppColors.burgundy,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  obscurePassword ? Icons.visibility_off : Icons.visibility,
+                  color: AppColors.grey,
+                ),
+                onPressed: toggleObscurePassword,
+              )
+            : null,
+
+        border: theme.inputDecorationTheme.border,
+        enabledBorder: theme.inputDecorationTheme.enabledBorder,
+        focusedBorder: theme.inputDecorationTheme.focusedBorder,
+
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.burgundy, width: 1.5),
+        ),
+
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.burgundy, width: 1.5),
+        ),
+      ),
+
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return "Bitte $label eingeben";
+        }
+        if (controller == _emailController && !validateEmail(value.trim())) {
+          return "Bitte eine gültige E-Mail-Adresse eingeben";
+        }
+        if (controller == _postalCodeController &&
+            _postalCodeController.text.length != 5) {
+          return "Bitte eine gültige Postleitzahl eingeben";
+        }
+        return null;
+      },
+    );
+  }
+
+  bool validateEmail(String email) {
+    RegExp emailPattern = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    bool isValidEmail = emailPattern.hasMatch(email);
+    return isValidEmail;
   }
 
   @override
@@ -123,123 +221,206 @@ class _RegistrationPageState extends State<RegistrationPage> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Niebelungen-Rent'),
-                  const Text('Registrierung'),
+            child: Form(
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.onUnfocus,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 400),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset("assets/images/logo.png"),
 
-                  TextField(
-                    controller: _firstNameController,
-                    keyboardType: TextInputType.text,
-                    decoration: const InputDecoration(labelText: 'Vorname'),
-                  ),
+                    SpaceWidgets.large,
 
-                  TextField(
-                    controller: _lastNameController,
-                    keyboardType: TextInputType.text,
-                    decoration: const InputDecoration(labelText: 'Nachname'),
-                  ),
+                    Text(
+                      'Registrierung',
+                      style: Theme.of(context).textTheme.headlineLarge,
+                    ),
 
-                  TextField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(labelText: 'E-Mail'),
-                  ),
+                    SpaceWidgets.medium,
 
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: obscurePassword,
-                    decoration: InputDecoration(
-                      labelText: 'Passwort',
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          obscurePassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                        onPressed: toggleObscurePassword,
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, LoginPage.routeName);
+                      },
+                      child: const Text('Schon registriert? Hier einloggen.'),
+                    ),
+
+                    SpaceWidgets.medium,
+
+                    Text(
+                      'Persönliche Daten',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+
+                    SpaceWidgets.small,
+
+                    // Vorname
+                    buildRequiredField(
+                      context: context,
+                      controller: _firstNameController,
+                      label: 'Vorname',
+                    ),
+
+                    SpaceWidgets.small,
+
+                    // Nachname
+                    buildRequiredField(
+                      context: context,
+                      controller: _lastNameController,
+                      label: 'Nachname',
+                    ),
+
+                    SpaceWidgets.small,
+
+                    // Geburtsdatum
+                    buildRequiredField(
+                      context: context,
+                      controller: _dateOfBirthController,
+                      label: 'Geburtsdatum (TT.MM.JJJJ)',
+                      keyboardType: TextInputType.datetime,
+                    ),
+
+                    SpaceWidgets.small,
+
+                    // Telefonnummer
+                    buildRequiredField(
+                      context: context,
+                      controller: _phoneNumberController,
+                      label: 'Telefonnummer',
+                      keyboardType: TextInputType.phone,
+                    ),
+
+                    SpaceWidgets.medium,
+
+                    Text(
+                      'Adresse',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+
+                    SpaceWidgets.small,
+
+                    // Straße
+                    buildRequiredField(
+                      context: context,
+                      controller: _streetController,
+                      label: 'Straße',
+                    ),
+
+                    SpaceWidgets.small,
+
+                    // Hausnummer
+                    buildRequiredField(
+                      context: context,
+                      controller: _houseNumberController,
+                      label: 'Hausnummer',
+                    ),
+
+                    SpaceWidgets.small,
+
+                    // Postleitzahl
+                    buildRequiredField(
+                      context: context,
+                      controller: _postalCodeController,
+                      label: 'Postleitzahl',
+                      keyboardType: TextInputType.number,
+                    ),
+
+                    SpaceWidgets.small,
+
+                    // Stadt
+                    buildRequiredField(
+                      context: context,
+                      controller: _cityController,
+                      label: 'Stadt',
+                    ),
+
+                    SpaceWidgets.small,
+
+                    // Land
+                    buildRequiredField(
+                      context: context,
+                      controller: _countryController,
+                      label: 'Land',
+                    ),
+
+                    SpaceWidgets.medium,
+
+                    Text(
+                      'Führerscheindaten',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+
+                    SpaceWidgets.small,
+
+                    // Führerscheinklasse
+                    DropdownButtonFormField<String>(
+                      initialValue: _licenseClass,
+                      decoration: const InputDecoration(
+                        labelText: 'Führerscheinklasse *',
                       ),
+                      items: _licenseClasses.map((klasse) {
+                        return DropdownMenuItem<String>(
+                          value: klasse,
+                          child: Text(klasse),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _licenseClass = value;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Bitte Führerscheinklasse auswählen';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                  TextField(
-                    controller: _phoneNumberController,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      labelText: 'Telefonnummer',
+
+                    SpaceWidgets.small,
+
+                    // Führerscheinablaufdatum
+                    buildRequiredField(
+                      context: context,
+                      controller: _licenseExpiryDateController,
+                      label: 'Führerscheinablaufdatum',
+                      keyboardType: TextInputType.datetime,
                     ),
-                  ),
 
-                  TextField(
-                    controller: _dateOfBirthController,
-                    keyboardType: TextInputType.datetime,
-                    decoration: const InputDecoration(
-                      labelText: 'Geburtsdatum (1.1.2000)',
+                    Text(
+                      'Account',
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
-                  ),
 
-                  DropdownButtonFormField<String>(
-                    initialValue: _licenseClass,
-                    decoration: const InputDecoration(
-                      labelText: 'Führerscheinklasse',
+                    SpaceWidgets.small,
+
+                    // E-Mail
+                    buildRequiredField(
+                      context: context,
+                      controller: _emailController,
+                      label: 'E-Mail',
+                      keyboardType: TextInputType.emailAddress,
                     ),
-                    items: _licenseClasses.map((klasse) {
-                      return DropdownMenuItem<String>(
-                        value: klasse,
-                        child: Text(klasse),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _licenseClass = value;
-                      });
-                    },
-                  ),
 
-                  TextField(
-                    controller: _licenseExpiryDateController,
-                    keyboardType: TextInputType.datetime,
-                    decoration: const InputDecoration(
-                      labelText: 'Führerscheinablaufdatum',
+                    SpaceWidgets.small,
+
+                    // Passwort
+                    buildRequiredField(
+                      context: context,
+                      controller: _passwordController,
+                      label: 'Passwort',
                     ),
-                  ),
 
-                  TextField(
-                    controller: _streetController,
-                    decoration: const InputDecoration(labelText: 'Straße'),
-                  ),
+                    SpaceWidgets.medium,
 
-                  TextField(
-                    controller: _houseNumberController,
-                    decoration: const InputDecoration(labelText: 'Hausnummer'),
-                  ),
-
-                  TextField(
-                    controller: _postalCodeController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Postleitzahl',
+                    ElevatedButton(
+                      onPressed: register,
+                      child: Text('Registrieren'),
                     ),
-                  ),
-
-                  TextField(
-                    controller: _cityController,
-                    decoration: const InputDecoration(labelText: 'Stadt'),
-                  ),
-
-                  TextField(
-                    controller: _countryController,
-                    decoration: const InputDecoration(labelText: 'Land'),
-                  ),
-
-                  ElevatedButton(
-                    onPressed: register,
-                    child: const Text('Registrieren'),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

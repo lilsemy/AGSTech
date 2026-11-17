@@ -49,6 +49,7 @@ class AppTheme {
         surface: backgroundColor,
         onPrimary: AppColors.white,
         onSurface: textColor,
+        error: AppColors.burgundy,
       ),
 
       // AppBar

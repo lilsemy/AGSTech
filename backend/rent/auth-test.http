@@ -4,8 +4,8 @@ Content-Type: application/json
 
 {
   "firstName": "Max",
-  "lastName": "Mustermann",
-  "email": "max.mustermann@example.com",
+  "lastName": "Muster",
+  "email": "max.muster@example.com",
   "password": "SichererTestPassword123!",
   "phoneNumber": "+491701234567",
   "dateOfBirth": "1998-05-15",

@@ -18,6 +18,7 @@ public class SecurityConfig {
                 // Berechtigungen für Endpunkte festlegen
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // Register & Login öffentlich erlauben
+                        .requestMatchers("/api/vehicles/**").permitAll() // Hack, später ändern
                         .anyRequest().authenticated()               // Alles andere erfordert Authentifizierung
                 );
 

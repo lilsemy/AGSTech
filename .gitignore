@@ -22,7 +22,8 @@ frontend/.idea/
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
-#.vscode/       gut oder nicht?
+.vscode/
+# Ich würde einfach mal Gut sagen, weil mich das jetzt bei so vielen Committen schon gestört hat ^^ Wenn jemand das anders sieht, gern wieder auskommentieren!
 
 # Flutter/Dart/Pub related
 frontend/doc/api/
@@ -49,4 +50,4 @@ frontend/android/app/release
 # Widget Preview related
 frontend/.widget_preview/
 
-# ----- FLUTTER --------
+# ----- FLUTTER --------frontend/android/build/

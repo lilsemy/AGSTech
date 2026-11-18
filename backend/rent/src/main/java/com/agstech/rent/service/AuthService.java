@@ -9,6 +9,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
+import java.time.LocalDate;
+import java.time.Period;
 
 @Service
 public class AuthService {
@@ -28,6 +30,14 @@ public class AuthService {
         // 1. Prüfen, ob E-Mail bereits vergeben ist
         if (customerRepository.existsByEmail(request.email)) {
             throw new RuntimeException("E-Mail-Adresse wird bereits verwendet.");
+        }
+        //Prüfen ob Fahrer mindestens 18 ist
+        if (Period.between(request.dateOfBirth, LocalDate.now()).getYears() < 18){
+            throw new RuntimeException("Fahrer muss mindestens 18Jahre alt sein");
+        }
+        //Prüfen ob Führerschein abgelaufen ist oder heute abläuft --> muss mindestens bis morgen gültig sein
+        if (request.licenseExpiryDate.isBefore(LocalDate.now()) || request.licenseExpiryDate.isEqual(LocalDate.now())){
+            throw new RuntimeException("Der Fahrer muss einen gültigen Führerschein besitzen");
         }
 
         // 2. Adresse suchen oder neu anlegen (mit .trim() gegen versehentliche Leerzeichen aus Flutter)

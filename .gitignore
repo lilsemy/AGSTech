@@ -19,11 +19,6 @@ frontend/*.ipr
 frontend/*.iws
 frontend/.idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/       gut oder nicht?
-
 # Flutter/Dart/Pub related
 frontend/doc/api/
 frontend/ios/Flutter/.last_build_id
@@ -45,6 +40,7 @@ frontend/app.*.map.json
 frontend/android/app/debug
 frontend/android/app/profile
 frontend/android/app/release
+frontend/android/build/
 
 # Widget Preview related
 frontend/.widget_preview/
@@ -53,3 +49,4 @@ frontend/.widget_preview/
 
 .idea
 .DS_Store
+.vscode/

@@ -129,6 +129,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
           const SnackBar(content: Text('Registrierung erfolgreich!')),
         );
         context.read<MyAppState>().login(_emailController.text);
+        debugPrint('HTTP Status: ${response.statusCode}');
+        debugPrint('Response: ${response.body}');
+      } else {
+        // Gibt Fehlercode aus, falls Backend Registrierung ablehnt (z.B. wegen Alter oder Führerscheinablauf)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Fehler (${response.statusCode}): ${response.body}')),
+        );
+        debugPrint('HTTP Status: ${response.statusCode}');
+        debugPrint('Response: ${response.body}');
       }
     } catch (e) {
       setState(() {

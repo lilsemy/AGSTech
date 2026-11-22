@@ -50,3 +50,6 @@ frontend/android/app/release
 frontend/.widget_preview/
 
 # ----- FLUTTER --------
+
+# ----- JAVA --------
+application-local.properties

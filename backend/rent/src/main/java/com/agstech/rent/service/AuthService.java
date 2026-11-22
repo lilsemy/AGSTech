@@ -1,14 +1,17 @@
 package com.agstech.rent.service;
 
+import com.agstech.rent.dto.LoginRequest;
 import com.agstech.rent.dto.RegisterRequest;
 import com.agstech.rent.model.Customer;
 import com.agstech.rent.model.Address;
+import com.agstech.rent.model.Session;
 import com.agstech.rent.repository.CustomerRepository;
 import com.agstech.rent.repository.AddressRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -16,11 +19,13 @@ public class AuthService {
     private final CustomerRepository customerRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AddressRepository addressRepository;
+    private final SessionService sessionService;
 
-    public AuthService(CustomerRepository customerRepository, AddressRepository addressRepository) {
+    public AuthService(CustomerRepository customerRepository, AddressRepository addressRepository, SessionService sessionService) {
         this.customerRepository = customerRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.addressRepository = addressRepository;
+        this.sessionService = sessionService;
     }
 
     @Transactional
@@ -68,5 +73,20 @@ public class AuthService {
 
         // 5. In Supabase speichern
         return customerRepository.save(customer);
+    }
+
+    //TODO returns null for now
+    public Session login(LoginRequest request) {
+        Optional<Customer> customer = customerRepository.findByEmail(request.email());
+
+        if (customer.isEmpty()) {
+            return null;                       // email is unknown = not a customer
+        }
+
+        if (!passwordEncoder.matches(request.password(), customer.get().getPasswordHash())) {
+            return null;                       // wrong password
+        }
+
+        return sessionService.createSession(customer.get().getCustomerId());
     }
 }

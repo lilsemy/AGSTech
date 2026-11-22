@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:app_frontend/app_state.dart';
 import 'package:app_frontend/customer/home_page.dart';
+import 'package:app_frontend/customer/vehicles_page.dart';
 import 'package:app_frontend/customer/bookings_page.dart';
 import 'package:app_frontend/customer/settings_page.dart';
 
@@ -18,7 +19,12 @@ class _MainNavigationState extends State<MainNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = [HomePage(), BookingsPage(), SettingsPage()];
+    final List<Widget> pages = [
+      HomePage(),
+      VehiclesPage(),
+      BookingsPage(),
+      SettingsPage(),
+    ];
 
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -41,6 +47,10 @@ class _MainNavigationState extends State<MainNavigation> {
                             BottomNavigationBarItem(
                               icon: Icon(Icons.home),
                               label: 'Home',
+                            ),
+                            BottomNavigationBarItem(
+                              icon: Icon(Icons.car_crash),
+                              label: 'Fahrzeuge',
                             ),
                             BottomNavigationBarItem(
                               icon: Icon(Icons.car_rental),
@@ -95,6 +105,10 @@ class _MainNavigationState extends State<MainNavigation> {
                               NavigationRailDestination(
                                 icon: Icon(Icons.home),
                                 label: Text('Home'),
+                              ),
+                              NavigationRailDestination(
+                                icon: Icon(Icons.car_crash),
+                                label: Text('Fahrzeuge'),
                               ),
                               NavigationRailDestination(
                                 icon: Icon(Icons.car_rental),

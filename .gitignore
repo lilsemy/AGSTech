@@ -19,12 +19,6 @@ frontend/*.ipr
 frontend/*.iws
 frontend/.idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-.vscode/
-# Ich würde einfach mal Gut sagen, weil mich das jetzt bei so vielen Committen schon gestört hat ^^ Wenn jemand das anders sieht, gern wieder auskommentieren!
-
 # Flutter/Dart/Pub related
 frontend/doc/api/
 frontend/ios/Flutter/.last_build_id
@@ -46,8 +40,13 @@ frontend/app.*.map.json
 frontend/android/app/debug
 frontend/android/app/profile
 frontend/android/app/release
+frontend/android/build/
 
 # Widget Preview related
 frontend/.widget_preview/
 
-# ----- FLUTTER --------frontend/android/build/
+# ----- FLUTTER --------
+
+.idea
+.DS_Store
+.vscode/

@@ -50,3 +50,7 @@ frontend/.widget_preview/
 .idea
 .DS_Store
 .vscode/
+
+
+# ----- JAVA --------
+application-local.properties

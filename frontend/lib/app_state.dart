@@ -12,8 +12,9 @@ class MyAppState extends ChangeNotifier {
   String _username = "";
 
   // Vehicles
-  final VehicleService _vehicleservice = VehicleService();
+  final VehicleService _vehicleService = VehicleService();
   List<Vehicle> _vehicles = [];
+  Vehicle? _selectedVehicle;
 
   // Demo
   final cars = ["Audi", "BMW", "Volvo", "Mercedes"];
@@ -36,7 +37,12 @@ class MyAppState extends ChangeNotifier {
     return List.unmodifiable(_vehicles);
   }
 
+  Vehicle? get selectedVehicle {
+    return _selectedVehicle;
+  }
+
   // Methods
+  // User
   void login(String user) {
     if (user.trim().isNotEmpty) {
       _username = user.trim();
@@ -51,18 +57,31 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void assignCar() {
-    car = cars[Random().nextInt(cars.length)];
-    notifyListeners();
-  }
-
+  // Vehicles
   Future<void> loadVehicles() async {
     try {
-      _vehicles = await _vehicleservice.fetchVehicles();
+      _vehicles = await _vehicleService.fetchVehicles();
     } catch (e) {
       debugPrint(e.toString());
     } finally {
       notifyListeners();
     }
+  }
+
+  Future<void> loadVehicleByVin(String vin) async {
+    try {
+      _selectedVehicle = await _vehicleService.fetchVehicleByVin(vin);
+    } catch (e) {
+      debugPrint(e.toString());
+      _selectedVehicle = null;
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  // Demo
+  void assignCar() {
+    car = cars[Random().nextInt(cars.length)];
+    notifyListeners();
   }
 }

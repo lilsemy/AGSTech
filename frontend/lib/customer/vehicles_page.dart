@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:app_frontend/app_state.dart';
+import 'package:app_frontend/customer/vehicle_details.dart';
 
 class VehiclesPage extends StatefulWidget {
   const VehiclesPage({super.key});
@@ -42,6 +43,11 @@ class _VehiclesPageState extends State<VehiclesPage> {
                 ? Icon(Icons.image)
                 : Image.network(imageUrl),
             minTileHeight: 100,
+            onTap: () => Navigator.pushNamed(
+              context,
+              VehicleDetails.routeName,
+              arguments: vehicle.vin,
+            ),
           );
         },
       ),

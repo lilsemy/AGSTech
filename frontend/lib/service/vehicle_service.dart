@@ -26,4 +26,23 @@ class VehicleService {
       "Fahrzeuge konnten nicht geladen werden. Status: ${response.statusCode}",
     );
   }
+
+  Future<Vehicle> fetchVehicleByVin(String vin) async {
+    final response = await http.get(Uri.parse("$apiUrl/$vin"));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(response.body);
+
+      Vehicle vehicle = Vehicle.fromJson(data);
+      return vehicle;
+    } else if (response.statusCode == 404) {
+      throw Exception(
+        "Fahrzeug ${vin} wurde nicht gefunden. Status: ${response.statusCode}",
+      );
+    } else {
+      throw Exception(
+        "Fahrzeug ${vin} konnte nicht geladen werden. Status: ${response.statusCode}",
+      );
+    }
+  }
 }

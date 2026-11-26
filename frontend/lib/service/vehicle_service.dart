@@ -7,9 +7,14 @@ import 'package:app_frontend/model/vehicle.dart';
 class VehicleService {
   static const String apiUrl = "http://localhost:8080/api/vehicles";
 
-  Future<List<Vehicle>> fetchVehicles() async {
-    final response = await http.get(Uri.parse(apiUrl));
+Future<List<Vehicle>> fetchVehicles({List<int>? equipmentIds}) async {
+    String url = apiUrl;
+    //Check, ob equipments ausgewählt wurden -> Wenn ja, umbau der URL, sodass die equipment IDs mitgegeben werden
+    if (equipmentIds != null && equipmentIds.isNotEmpty) {
+      url = "$apiUrl?equipments=${equipmentIds.join(',')}";
+    }
 
+    final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(
         response.body,

@@ -4,6 +4,8 @@ import 'dart:math';
 
 import 'package:app_frontend/service/vehicle_service.dart';
 import 'package:app_frontend/model/vehicle.dart';
+import 'package:app_frontend/service/equipment_service.dart';
+import 'package:app_frontend/model/equipment.dart';
 
 class MyAppState extends ChangeNotifier {
   // User
@@ -15,6 +17,11 @@ class MyAppState extends ChangeNotifier {
   final VehicleService _vehicleService = VehicleService();
   List<Vehicle> _vehicles = [];
   Vehicle? _selectedVehicle;
+
+  // Equipments
+  final EquipmentService _equipmentService = EquipmentService();
+  List<Equipment> _equipments = [];
+  final List<int> _selectedEquipmentIds = [];
 
   // Demo
   final cars = ["Audi", "BMW", "Volvo", "Mercedes"];
@@ -41,6 +48,14 @@ class MyAppState extends ChangeNotifier {
     return _selectedVehicle;
   }
 
+  List<Equipment> get equipments {
+    return List.unmodifiable(_equipments);
+  }
+
+  List<int> get selectedEquipmentIds {
+    return List.unmodifiable(_selectedEquipmentIds);
+  }
+
   // Methods
   // User
   void login(String user) {
@@ -60,7 +75,9 @@ class MyAppState extends ChangeNotifier {
   // Vehicles
   Future<void> loadVehicles() async {
     try {
-      _vehicles = await _vehicleService.fetchVehicles();
+      _vehicles = await _vehicleService.fetchVehicles(
+        equipmentIds: _selectedEquipmentIds,
+      );
     } catch (e) {
       debugPrint(e.toString());
     } finally {
@@ -78,6 +95,27 @@ class MyAppState extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // Equipments
+  Future<void> loadEquipments() async {
+    try {
+      _equipments = await _equipmentService.fetchEquipments();
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  void toggleEquipmentFilter(int equipmentId) {
+    if (_selectedEquipmentIds.contains(equipmentId)) {
+      _selectedEquipmentIds.remove(equipmentId);
+    } else {
+      _selectedEquipmentIds.add(equipmentId);
+    }
+    loadVehicles();
+  }
+
 
   // Demo
   void assignCar() {

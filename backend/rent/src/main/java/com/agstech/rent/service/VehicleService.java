@@ -19,11 +19,25 @@ public class VehicleService {
         this.vehicleRepository = vehicleRepository;
     }
 
-    public List<Vehicle> getAllVehicles() {
+    /*public List<Vehicle> getAllVehicles() {
         return vehicleRepository.findAll();
     }
+    --> Theoretically now deprecated as getVehicleByVin does the Job.
+    */
 
     public Optional<Vehicle> getVehicleByVin(String vin) {
         return vehicleRepository.findById(vin);
+    }
+
+    /**
+     * Method to find Vehicles by Equipment. If non specified, all Vehicles are returned
+     * @param equipmentIds
+     * @return List<Vehicles> vehicles
+     */
+    public List<Vehicle> getVehiclesByEquipments(List<Long> equipmentIds) {
+        if (equipmentIds == null || equipmentIds.isEmpty()) {
+            return vehicleRepository.findAll();
+        }
+        return vehicleRepository.findByAllEquipmentIds(equipmentIds, equipmentIds.size());
     }
 }

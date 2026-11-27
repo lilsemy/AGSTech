@@ -2,6 +2,7 @@ package com.agstech.rent.service;
 
 import com.agstech.rent.dto.LoginRequest;
 import com.agstech.rent.dto.RegisterRequest;
+import com.agstech.rent.exception.InvalidCredentialsException;
 import com.agstech.rent.model.Customer;
 import com.agstech.rent.model.Address;
 import com.agstech.rent.model.Session;
@@ -85,16 +86,15 @@ public class AuthService {
         return customerRepository.save(customer);
     }
 
-    //TODO returns null for now
-    public Session login(LoginRequest request) {
+    public Session login(LoginRequest request) throws InvalidCredentialsException {
         Optional<Customer> customer = customerRepository.findByEmail(request.email());
 
         if (customer.isEmpty()) {
-            return null;                       // email is unknown = not a customer
+            throw new InvalidCredentialsException("Ungültige Anmeldedaten");
         }
 
         if (!passwordEncoder.matches(request.password(), customer.get().getPasswordHash())) {
-            return null;                       // wrong password
+            throw new InvalidCredentialsException("Ungültige Anmeldedaten");
         }
 
         return sessionService.createSession(customer.get().getCustomerId());

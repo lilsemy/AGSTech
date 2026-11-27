@@ -5,8 +5,8 @@ Content-Type: application/json
 {
   "firstName": "Max",
   "lastName": "Mustermann",
-  "email": "max.mustermann@example.com",
-  "password": "SichererTestPassword123!",
+  "email": "max.test@example.com",
+  "password": "SichererTest",
   "phoneNumber": "+491701234567",
   "dateOfBirth": "1998-05-15",
   "licenseClass": "B",
@@ -44,3 +44,21 @@ Content-Type: application/json
   "email": "nobody@example.com",
   "password": "egal"
 }
+
+### 1. Who am I (with token)
+GET http://localhost:8080/api/me
+Authorization: Bearer Rn9rsCmc5UUKjdDhyC0Rsg41n5SpBlezoySfpe33z4c
+
+### 2. Who am I (without token)
+GET http://localhost:8080/api/me
+
+### 3. Logout (same token)
+POST http://localhost:8080/api/auth/logout
+Authorization: Bearer Rn9rsCmc5UUKjdDhyC0Rsg41n5SpBlezoySfpe33z4c
+
+### 4. Who am I again (same token, expect 401)
+GET http://localhost:8080/api/me
+Authorization: Bearer Rn9rsCmc5UUKjdDhyC0Rsg41n5SpBlezoySfpe33z4c
+
+### 5. Logout without token (expect your OK)
+POST http://localhost:8080/api/auth/logout

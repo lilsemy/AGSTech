@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
 @Table(name = "vehicle") // Exakter Tabellenname in Supabase
@@ -63,6 +64,25 @@ public class Vehicle {
 
     @Column(name = "locationid")
     private Long locationId;
+
+    /**
+     * Attribut "equipments" is fetched via connecting Table "VehicleEquipment", to store a set of equipmentIds
+     */
+    @ManyToMany
+    @JoinTable(
+            name = "vehicleequipment",
+            joinColumns = @JoinColumn(name = "vin"),
+            inverseJoinColumns = @JoinColumn(name = "equipmentid")
+    )
+    private Set<Equipment> equipments;
+
+    public Set<Equipment> getEquipments() {
+        return equipments;
+    }
+
+    public void setEquipments(Set<Equipment> equipments) {
+        this.equipments = equipments;
+    }
 
     public String getVin() {
         return vin;

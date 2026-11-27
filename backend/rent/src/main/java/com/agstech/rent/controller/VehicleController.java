@@ -24,9 +24,9 @@ public class VehicleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Vehicle>> getAllVehicles() {
-        List<Vehicle> vehicles = vehicleService.getAllVehicles();
-
+    public ResponseEntity<List<Vehicle>> getAllVehicles(
+            @RequestParam(required = false) List<Long> equipments) {
+        List<Vehicle> vehicles = vehicleService.getVehiclesByEquipments(equipments);
         return ResponseEntity.ok(vehicles);
     }
 

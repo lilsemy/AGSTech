@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // Register & Login öffentlich erlauben
                         .requestMatchers("/api/vehicles/**").permitAll() // Hack, später ändern
+                        .requestMatchers("/api/equipments/**").permitAll() // Wir hacken einfach nochmal hihi
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated() // Alles andere erfordert Authentifizierung
                 )
